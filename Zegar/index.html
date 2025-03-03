@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body onload="startTime()">
+    <div id ="txt"></div>   
+    <script>
+        function startTime(){
+            const today = new Date();
+            let h = today.getHours();
+            let m = today.getMinutes();
+            let s = today.getSeconds();
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('txt').innerHTML = h +":" + m + ":" + s;
+            setTimeout(startTime,1000);
+        }
+        //Adding 0 so we have 07
+        function checkTime(i){
+            if (i<10){
+                i = "0" + i
+            };
+            return i;
+        }
+    </script>
+</body>
+</html>
