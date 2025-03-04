@@ -1,0 +1,32 @@
+body {
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.5;
+    background-color: black;
+    color: azure;
+}
+
+section.times div {
+    padding: 24px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+section.times h2 {
+    margin: 0;
+    text-align: left;
+    flex: 1;
+    position: relative;
+}
+
+section.times div.day h2::before {
+    content: "☀️  ";
+    font-size: 0.8em;
+}
+
+section.times div.night h2::before {
+    content: "🌙  ";
+    font-size: 0.8em;
+}
