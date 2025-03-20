@@ -10,6 +10,8 @@
     <button type="button" onclick="Sprawdzanie()">Sprwadz</button>
     <p id="wynik"></p>
     <script>
+        /* Napisz kod, który sprawdzi, czy podane słowo jest palindromem (czyta
+        się tak samo od przodu i od tyłu). */
         function Sprawdzanie(){
             let text = document.getElementById("text").value.toLowerCase().replace(/\s+/g, '');
             if (text === text.split("").reverse().join("")){
