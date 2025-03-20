@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" name="text" id="text">
+    <button type="button" onclick="Sprawdzanie()">Sprwadz</button>
+    <p id="wynik"></p>
+    <script>
+        function Sprawdzanie(){
+            let text = document.getElementById("text").value.toLowerCase().replace(/\s+/g, '');
+            if (text === text.split("").reverse().join("")){
+                document.getElementById("wynik").innerHTML = "To jest palindrom";
+        } else {
+            document.getElementById("wynik").innerHTML = "To nie jest palindrom";
+        }
+        }
+    </script>
+</body>
+</html>

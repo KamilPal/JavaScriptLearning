@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*Utwórz tablicę numbers zawierającą liczby od 1 do 20. Utwórz nową
+        tablicę zawierającą tylko liczby podzielne przez 3, a następnie zmień każdą
+        wartość w nowej tablicy, podnosząc ją do kwadratu.*/
+        const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+        const Przez3 = numbers.filter(i => i % 3 === 0);
+        const Kwadrat = Przez3.map(i => i ** 2);
+
+        console.log(Kwadrat);
+    </script>
+</body>
+</html>
