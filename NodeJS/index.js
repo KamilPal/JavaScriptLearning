@@ -1,85 +1,106 @@
 const fs = require('fs');
-const path = require('path');
+const readline = require('readline-sync');
+const FILE_PATH = 'tasks.json';
 
-const filePath = path.join(__dirname, 'tasks.json');
+let tasks = [];
+let nextId = 1;
 
-// Funkcja do wczytywania zadań z pliku
 function loadTasks() {
+  if (fs.existsSync(FILE_PATH)) {
+    const data = fs.readFileSync(FILE_PATH, 'utf8');
     try {
-        const data = fs.readFileSync(filePath, 'utf8');
-        return JSON.parse(data);
-    } catch (error) {
-        return [];
+      const parsed = JSON.parse(data);
+      tasks = parsed.tasks || [];
+      nextId = parsed.nextId || 1;
+    } catch (err) {
+      console.log('Błąd w pliku JSON. Tworzę nową listę.');
     }
+  }
 }
 
-// Funkcja do zapisywania zadań do pliku
-function saveTasks(tasks) {
-    fs.writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+function saveTasks() {
+  const data = JSON.stringify({ tasks, nextId }, null, 2);
+  fs.writeFileSync(FILE_PATH, data, 'utf8');
 }
 
-// Dodawanie nowego zadania
-function addTask(title) {
-    const tasks = loadTasks();
-    const newTask = { id: tasks.length + 1, title, completed: false };
-    tasks.push(newTask);
-    saveTasks(tasks);
-    console.log(`Dodano zadanie: ${title}`);
+function showMenu() {
+  console.log('\n=== TODO Lista ===');
+  console.log('1. Dodaj zadanie');
+  console.log('2. Pokaż wszystkie zadania');
+  console.log('3. Usuń zadanie');
+  console.log('4. Zmień status zadania (✔/X)');
+  console.log('0. Wyjście\n');
 }
 
-// Wyświetlanie wszystkich zadań
+function addTask() {
+  const task = readline.question('Wpisz treść zadania: ');
+  tasks.push({ id: nextId++, text: task, done: false });
+  saveTasks();
+  console.log('Zadanie dodane!');
+}
+
 function listTasks() {
-    const tasks = loadTasks();
-    if (tasks.length === 0) {
-        console.log('Brak zadań na liście.');
-        return;
-    }
+  console.log('\n--- Lista zadań ---');
+  if (tasks.length === 0) {
+    console.log('Brak zadań.');
+  } else {
     tasks.forEach(task => {
-        console.log(`${task.id}. [${task.completed ? '✔' : ' '}] ${task.title}`);
+      const status = task.done ? '[✔]' : '[X]';
+      console.log(`${status} [${task.id}] ${task.text}`);
     });
+  }
 }
 
-// Oznaczanie zadania jako ukończone
-function completeTask(id) {
-    const tasks = loadTasks();
-    const task = tasks.find(t => t.id === parseInt(id));
-    if (!task) {
-        console.log('Nie znaleziono zadania.');
-        return;
-    }
-    task.completed = true;
-    saveTasks(tasks);
-    console.log(`Zadanie "${task.title}" oznaczone jako ukończone.`);
+function deleteTask() {
+  const id = parseInt(readline.question('Podaj ID do usunięcia: '));
+  const index = tasks.findIndex(t => t.id === id);
+  if (index !== -1) {
+    tasks.splice(index, 1);
+    saveTasks();
+    console.log('Zadanie usunięte.');
+  } else {
+    console.log('Nie znaleziono zadania o tym ID.');
+  }
 }
 
-// Usuwanie zadania
-function removeTask(id) {
-    let tasks = loadTasks();
-    const initialLength = tasks.length;
-    tasks = tasks.filter(t => t.id !== parseInt(id));
-    if (tasks.length === initialLength) {
-        console.log('Nie znaleziono zadania.');
-        return;
-    }
-    saveTasks(tasks);
-    console.log(`Usunięto zadanie o ID ${id}.`);
+function toggleTaskStatus() {
+  listTasks(); 
+
+  const id = parseInt(readline.question('Podaj ID zadania, którego status chcesz zmienić: '));
+  const task = tasks.find(t => t.id === id);
+  
+  if (task) {
+    task.done = !task.done;
+    const status = task.done ? '[✔]' : '[X]';
+    console.log(`Status zadania [${id}] (${task.text}) zmieniony na: ${status}`);
+    saveTasks();
+  } else {
+    console.log('Nie znaleziono zadania o tym ID.');
+  }
 }
 
-// Obsługa argumentów CLI
-const [,, command, ...args] = process.argv;
-switch (command) {
-    case 'add':
-        addTask(args.join(' '));
-        break;
-    case 'list':
-        listTasks();
-        break;
-    case 'done':
-        completeTask(args[0]);
-        break;
-    case 'remove':
-        removeTask(args[0]);
-        break;
+// Start
+loadTasks();
+while (true) {
+  showMenu();
+  const choice = readline.question('Wybierz opcję: ');
+  switch (choice) {
+    case '1':
+      addTask();
+      break;
+    case '2':
+      listTasks();
+      break;
+    case '3':
+      deleteTask();
+      break;
+    case '4':
+      toggleTaskStatus();
+      break;
+    case '0':
+      console.log('\nDo zobaczenia!\n');
+      process.exit(0);
     default:
-        console.log('Nieznana komenda. Użyj: add, list, done, remove');
+      console.log('Nieprawidłowa opcja.');
+  }
 }
